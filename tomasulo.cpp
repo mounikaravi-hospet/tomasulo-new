@@ -196,7 +196,7 @@ public:
         {
             file_read >> file_data;
             //cout << file_data << endl;
-            if (file_data == "$Total_Add_Sub_Reservation_Stations")
+            if (file_data == "Total_Add_Sub_Reservation_Stations")
             {
                 add_sub_complete = true;
                 file_read >> this->no_of_add_sub_station;
@@ -261,7 +261,7 @@ public:
             {
                 file_read >> this->no_of_add_sub_cycle;
                 add_sub_cycle_comp = true;
-                cout << this->no_of_add_sub_cycle << endl;
+                //  cout << this->no_of_add_sub_cycle << endl;
             }
             else if (file_data == "Total_Mul_Cycles")
             {
@@ -374,48 +374,54 @@ public:
         {
             string inst_data;
             file_read >> inst_data;
-            //cout << inst_data << endl;
-            if (inst_data == Instruction_Type::ADDD)
+            // cout << inst_data << endl;
+            if (inst_data == "Add")
             {
                 this->instr[i].inst_type = Instruction_Type::ADDD;
                 file_read >> this->instr[i].dest_reg;
                 file_read >> this->instr[i].src_reg_1;
                 file_read >> this->instr[i].src_reg_2;
+                // cout << "Inst" << this->instr[i].dest_reg << " " << this->instr[i].src_reg_1 << " " << this->instr[i].src_reg_2;
             }
-            else if (inst_data == Instruction_Type::SUBD)
+            else if (inst_data == "Sub")
             {
                 this->instr[i].inst_type = Instruction_Type::SUBD;
                 file_read >> this->instr[i].dest_reg;
                 file_read >> this->instr[i].src_reg_1;
                 file_read >> this->instr[i].src_reg_2;
+                // cout << "Inst" << this->instr[i].dest_reg << " " << this->instr[i].src_reg_1 << " " << this->instr[i].src_reg_2;
             }
-            else if (inst_data == Instruction_Type::MULT)
+            else if (inst_data == "Mul")
             {
                 this->instr[i].inst_type = Instruction_Type::MULT;
                 file_read >> this->instr[i].dest_reg;
                 file_read >> this->instr[i].src_reg_1;
                 file_read >> this->instr[i].src_reg_2;
+                // cout << "Inst" << this->instr[i].dest_reg << " " << this->instr[i].src_reg_1 << " " << this->instr[i].src_reg_2;
             }
-            else if (inst_data == Instruction_Type::DIVD)
+            else if (inst_data == "Div")
             {
                 this->instr[i].inst_type = Instruction_Type::DIVD;
                 file_read >> this->instr[i].dest_reg;
                 file_read >> this->instr[i].src_reg_1;
                 file_read >> this->instr[i].src_reg_2;
+                // cout << "Inst" << this->instr[i].dest_reg << " " << this->instr[i].src_reg_1 << " " << this->instr[i].src_reg_2;
             }
-            else if (inst_data == Instruction_Type::LOAD)
+            else if (inst_data == "Load")
             {
                 this->instr[i].inst_type = Instruction_Type::LOAD;
                 file_read >> this->instr[i].src_reg_2;
                 file_read >> this->instr[i].immediate_offset;
                 file_read >> this->instr[i].src_reg_1;
+                // cout << "Inst" << this->instr[i].immediate_offset << " " << this->instr[i].src_reg_1 << " " << this->instr[i].src_reg_2;
             }
-            else if (inst_data == Instruction_Type::STORE)
+            else if (inst_data == "Store")
             {
                 this->instr[i].inst_type = Instruction_Type::STORE;
                 file_read >> this->instr[i].src_reg_2;
                 file_read >> this->instr[i].immediate_offset;
                 file_read >> this->instr[i].src_reg_1;
+                // cout << "Inst" << this->instr[i].immediate_offset << " " << this->instr[i].src_reg_1 << " " << this->instr[i].src_reg_2;
             }
         }
     }
@@ -661,7 +667,7 @@ public:
                     current_process.append(num);
                     current_process = current_process + " is issued at reservation station: " + mul_div_station[buffer_no].station_name + "\n";
 
-                    if (instr[curr_instr].inst_type == Instruction_Type::MULT)
+                    if (instr[curr_instr].inst_type == "Mul")
                         this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_mul_cycle;
                     else
                         this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_div_cycle;
@@ -1068,9 +1074,12 @@ public:
         int j = 0;
         for (int i = 0; i < no_of_instr; i++)
         {
-            char chr[10];
-            _itoa_s(i, chr, 10);
-            strcat_s(chr, ".");
+            string chr;
+            // _itoa_s(i, chr, 10);
+
+            chr = std::to_string(i);
+
+            chr.append(".");
 
             movecursorto(2, j + y + 2);
             if (instr[i].inst_type == Instruction_Type::LOAD || instr[i].inst_type == Instruction_Type::STORE)
@@ -1086,19 +1095,22 @@ public:
             movecursorto(26, j + y + 2);
             j++;
 
-            char issue_instruction[10];
-            char start_execution[10];
-            char complete_execution[10];
-            char write_instrustion[10];
+            string issue_instruction;
+            string start_execution;
+            string complete_execution;
+            string write_instruction;
 
-            _itoa_s(this->instr[i].inst_status.issue, issue_instruction, 10);
-            _itoa_s(this->instr[i].inst_status.exe_start, start_execution, 10);
-            _itoa_s(this->instr[i].inst_status.exe_complete, complete_execution, 10);
-            _itoa_s(this->instr[i].inst_status.write_back, write_instrustion, 10);
+            // _itoa_s(this->instr[i].inst_status.issue, issue_instruction, 10);
+            // _itoa_s(this->instr[i].inst_status.exe_start, start_execution, 10);
+            // _itoa_s(this->instr[i].inst_status.exe_complete, complete_execution, 10);
+            // _itoa_s(this->instr[i].inst_status.write_back, write_instrustion, 10);
 
-            // issue_instruction = std::to_string(this->instr[i].inst_status.issue);
+            issue_instruction = std::to_string(this->instr[i].inst_status.issue);
+            start_execution = std::to_string(this->instr[i].inst_status.exe_start);
+            complete_execution = std::to_string(this->instr[i].inst_status.exe_complete);
+            write_instruction = std::to_string(this->instr[i].inst_status.write_back);
 
-            cout << "|" << std::right << setw(7) << (instr[i].inst_status.issue == -1 ? "" : issue_instruction) << "|" << setw(7) << (instr[i].inst_status.exe_start == -1 ? "" : start_execution) << "|" << setw(7) << (instr[i].inst_status.exe_complete == -1 ? "" : complete_execution) << "|" << setw(10) << (instr[i].inst_status.write_back == -1 ? "" : write_instrustion) << "|";
+            cout << "|" << std::right << setw(7) << (instr[i].inst_status.issue == -1 ? "" : issue_instruction) << "|" << setw(7) << (instr[i].inst_status.exe_start == -1 ? "" : start_execution) << "|" << setw(7) << (instr[i].inst_status.exe_complete == -1 ? "" : complete_execution) << "|" << setw(10) << (instr[i].inst_status.write_back == -1 ? "" : write_instruction) << "|";
 
             movecursorto(26, j + y + 2);
 

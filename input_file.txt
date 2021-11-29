@@ -1,6 +1,6 @@
 $Enter the number of reservation stations and buffers below
 
-$Total_Add_Sub_Reservation_Stations 3
+Total_Add_Sub_Reservation_Stations 3
 Total_Mul_Div_Reservation_Stations 2
 Total_Load_Buffers 3
 Total_Store_Buffers 1
