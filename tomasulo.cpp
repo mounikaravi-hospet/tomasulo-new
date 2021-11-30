@@ -554,14 +554,14 @@ public:
                     this->instr[curr_instr].inst_status.issue = cycle_number;
                     current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
-                    current_process = current_process + " is issued at load buffer: " + load_buf[buffer_no].buffer_name + "\n";
+                    current_process = current_process + " is issued at load buffer: " + this->load_buf[buffer_no].buffer_name + "\n";
 
                     this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_load_store_cycle;
                     //checking RAW hazard
                     int register_no = atoi(&this->instr[curr_instr].src_reg_2.c_str()[1]);
                     this->load_buf[buffer_no].func_unit = this->status[register_no].write_unit;
                     //set status of register being written by load instruction
-                    this->status[register_no].write_unit = load_buf[buffer_no].buffer_name;
+                    this->status[register_no].write_unit = this->load_buf[buffer_no].buffer_name;
                 }
             }
 
@@ -590,7 +590,7 @@ public:
                     this->instr[curr_instr].inst_status.issue = cycle_number;
                     current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
-                    current_process = current_process + " is issued at store buffer: " + store_buf[buffer_no].buffer_name + "\n";
+                    current_process = current_process + " is issued at store buffer: " + this->store_buf[buffer_no].buffer_name + "\n";
 
                     this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_load_store_cycle;
                     //checking RAW hazard
@@ -621,7 +621,7 @@ public:
                     this->instr[curr_instr].inst_status.issue = cycle_number;
                     current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
-                    current_process = current_process + " is issued at reservation station: " + add_sub_station[buffer_no].station_name + "\n";
+                    current_process = current_process + " is issued at reservation station: " + this->add_sub_station[buffer_no].station_name + "\n";
 
                     this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_add_sub_cycle;
                     this->add_sub_station[buffer_no].inst_type = this->instr[curr_instr].inst_type;
