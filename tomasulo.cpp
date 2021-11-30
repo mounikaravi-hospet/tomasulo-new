@@ -711,7 +711,7 @@ public:
                 continue; //instruction completed at this cycle number so can't write back yet
 
             this->load_buf[i].inst->inst_status.write_back = cycle_number;
-            current_process += "#Instruction at load buffer " + load_buf[i].buffer_name + " is written back.\n";
+            current_process += "#Instruction at load buffer " + this->load_buf[i].buffer_name + " is written back.\n";
             int reg_no = atoi(&this->load_buf[i].inst->src_reg_2.c_str()[1]);
 
             if (this->status[reg_no].write_unit == this->load_buf[i].buffer_name)
@@ -737,9 +737,9 @@ public:
             if (this->store_buf[i].inst->inst_status.exe_complete == cycle_number)
                 continue; //instruction completed at this cycle number so can't write back yet
 
-            this->store_buf[i].inst->inst_status.write_back = cycle_number;
             current_process += "#Instruction at store buffer " + store_buf[i].buffer_name + " is written back.\n";
 
+            this->store_buf[i].inst->inst_status.write_back = cycle_number;
             this->store_buf[i].isBusy = false;
             this->store_buf[i].reg_loc = "";
             this->store_buf[i].inst = nullptr;
@@ -786,7 +786,7 @@ public:
             if (this->mul_div_station[i].inst->inst_status.exe_complete == cycle_number)
                 continue; //instruction completed at this cycle number so can't write back yet
 
-            this->add_sub_station[i].inst->inst_status.write_back = cycle_number;
+            this->mul_div_station[i].inst->inst_status.write_back = cycle_number;
             current_process += "#Instruction at Reservation station " + mul_div_station[i].station_name + " is written back.\n";
             int reg_no = atoi(&this->mul_div_station[i].inst->dest_reg.c_str()[1]);
 
@@ -831,12 +831,12 @@ public:
                     //we are done with the execution of the instruction
                     this->load_buf[i].inst->inst_status.exe_complete = cycle_number;
                     //display this on the screen
-                    current_process = current_process + "#Instruction at load buffer " + load_buf[i].buffer_name + " has completed execution.\n";
+                    current_process = current_process + "#Instruction at load buffer " + this->load_buf[i].buffer_name + " has completed execution.\n";
                     continue;
                 }
                 else
                 {
-                    current_process = current_process + "#Instruction at load buffer " + load_buf[i].buffer_name + " has started its execution.\n";
+                    current_process = current_process + "#Instruction at load buffer " + this->load_buf[i].buffer_name + " has started its execution.\n";
                     continue;
                 }
             }
@@ -853,12 +853,12 @@ public:
                 //we are done with the execution of the instruction
                 this->load_buf[i].inst->inst_status.exe_complete = cycle_number;
                 //display this on the screen
-                current_process = current_process + "#Instruction at load buffer " + load_buf[i].buffer_name + " has completed execution.\n";
+                current_process = current_process + "#Instruction at load buffer " + this->load_buf[i].buffer_name + " has completed execution.\n";
                 continue;
             }
             else
             {
-                current_process = current_process + "#Instruction at load buffer " + load_buf[i].buffer_name + " has started its execution.\n";
+                current_process = current_process + "#Instruction at load buffer " + this->load_buf[i].buffer_name + " has executed another cycle.\n";
                 continue;
             }
             i++;
@@ -886,12 +886,12 @@ public:
                     //we are done with the execution of the instruction
                     this->store_buf[j].inst->inst_status.exe_complete = cycle_number;
                     //display this on the screen
-                    current_process = current_process + "#Instruction at store buffer " + store_buf[j].buffer_name + " has completed execution.\n";
+                    current_process = current_process + "#Instruction at store buffer " + this->store_buf[j].buffer_name + " has completed execution.\n";
                     continue;
                 }
                 else
                 {
-                    current_process = current_process + "#Instruction at store buffer " + store_buf[j].buffer_name + " has started its execution.\n";
+                    current_process = current_process + "#Instruction at store buffer " + this->store_buf[j].buffer_name + " has started its execution.\n";
                     continue;
                 }
             }
@@ -908,12 +908,12 @@ public:
                 //we are done with the execution of the instruction
                 this->store_buf[j].inst->inst_status.exe_complete = cycle_number;
                 //display this on the screen
-                current_process = current_process + "#Instruction at store buffer " + store_buf[j].buffer_name + " has completed execution.\n";
+                current_process = current_process + "#Instruction at store buffer " + this->store_buf[j].buffer_name + " has completed execution.\n";
                 continue;
             }
             else
             {
-                current_process = current_process + "#Instruction at store buffer " + store_buf[j].buffer_name + " has started its execution.\n";
+                current_process = current_process + "#Instruction at store buffer " + this->store_buf[j].buffer_name + " has executed another cycle.\n";
                 continue;
             }
             j++;
@@ -941,12 +941,12 @@ public:
                     //we are done with the execution of the instruction
                     this->add_sub_station[k].inst->inst_status.exe_complete = cycle_number;
                     //display this on the screen
-                    current_process = current_process + "#Instruction at reservation station " + add_sub_station[k].station_name + " has completed execution.\n";
+                    current_process = current_process + "#Instruction at reservation station " + this->add_sub_station[k].station_name + " has completed execution.\n";
                     continue;
                 }
                 else
                 {
-                    current_process = current_process + "#Instruction at reservation station " + add_sub_station[k].station_name + " has started its execution.\n";
+                    current_process = current_process + "#Instruction at reservation station " + this->add_sub_station[k].station_name + " has started its execution.\n";
                     continue;
                 }
             }
@@ -963,12 +963,12 @@ public:
                 //we are done with the execution of the instruction
                 this->add_sub_station[k].inst->inst_status.exe_complete = cycle_number;
                 //display this on the screen
-                current_process = current_process + "#Instruction at reservation station " + add_sub_station[k].station_name + " has completed execution.\n";
+                current_process = current_process + "#Instruction at reservation station " + this->add_sub_station[k].station_name + " has completed execution.\n";
                 continue;
             }
             else
             {
-                current_process = current_process + "#Instruction at reservation station " + add_sub_station[k].station_name + " has started its execution.\n";
+                current_process = current_process + "#Instruction at reservation station " + this->add_sub_station[k].station_name + " has executed one more cycle.\n";
                 continue;
             }
             k++;
@@ -996,12 +996,12 @@ public:
                     //we are done with the execution of the instruction
                     this->mul_div_station[l].inst->inst_status.exe_complete = cycle_number;
                     //display this on the screen
-                    current_process = current_process + "#Instruction at reservation station " + mul_div_station[l].station_name + " has completed execution.\n";
+                    current_process = current_process + "#Instruction at reservation station " + this->mul_div_station[l].station_name + " has completed execution.\n";
                     continue;
                 }
                 else
                 {
-                    current_process = current_process + "#Instruction at reservation station " + mul_div_station[l].station_name + " has started its execution.\n";
+                    current_process = current_process + "#Instruction at reservation station " + this->mul_div_station[l].station_name + " has started its execution.\n";
                     continue;
                 }
             }
@@ -1018,12 +1018,12 @@ public:
                 //we are done with the execution of the instruction
                 this->mul_div_station[l].inst->inst_status.exe_complete = cycle_number;
                 //display this on the screen
-                current_process = current_process + "#Instruction at reservation station " + mul_div_station[l].station_name + " has completed execution.\n";
+                current_process = current_process + "#Instruction at reservation station " + this->mul_div_station[l].station_name + " has completed execution.\n";
                 continue;
             }
             else
             {
-                current_process = current_process + "#Instruction at reservation station " + mul_div_station[l].station_name + " has started its execution.\n";
+                current_process = current_process + "#Instruction at reservation station " + this->mul_div_station[l].station_name + " has executed one more cycle.\n";
                 continue;
             }
             l++;
