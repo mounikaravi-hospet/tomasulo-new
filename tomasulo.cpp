@@ -552,7 +552,7 @@ public:
                     load_buf[buffer_no].reg_loc += " + ";
                     load_buf[buffer_no].reg_loc.append(offset);
                     this->instr[curr_instr].inst_status.issue = cycle_number;
-                    current_process = current_process + "Instruction Number: ";
+                    current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
                     current_process = current_process + " is issued at load buffer: " + load_buf[buffer_no].buffer_name + "\n";
 
@@ -580,6 +580,7 @@ public:
 
                 else
                 {
+                    this->store_buf[buffer_no].isBusy = true;
                     store_buf[buffer_no].isBusy = true;
                     store_buf[buffer_no].inst = &this->instr[curr_instr];
                     store_buf[buffer_no].reg_loc = this->instr[curr_instr].src_reg_1;
@@ -587,7 +588,7 @@ public:
                     store_buf[buffer_no].reg_loc += " + ";
                     store_buf[buffer_no].reg_loc.append(offset);
                     this->instr[curr_instr].inst_status.issue = cycle_number;
-                    current_process = current_process + "Instruction Number: ";
+                    current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
                     current_process = current_process + " is issued at store buffer: " + store_buf[buffer_no].buffer_name + "\n";
 
@@ -602,7 +603,7 @@ public:
 
             else if (instr[curr_instr].inst_type == Instruction_Type::ADDD || instr[curr_instr].inst_type == Instruction_Type::SUBD)
             {
-                buffer_no = Free_Res_Station_For_AddSub();
+                int buffer_no = Free_Res_Station_For_AddSub();
 
                 if (buffer_no == -1)
                 {
@@ -615,10 +616,10 @@ public:
 
                 else
                 {
-                    add_sub_station[buffer_no].isBusy = true;
-                    add_sub_station[buffer_no].inst = &this->instr[curr_instr];
+                    this->add_sub_station[buffer_no].isBusy = true;
+                    this->add_sub_station[buffer_no].inst = &this->instr[curr_instr];
                     this->instr[curr_instr].inst_status.issue = cycle_number;
-                    current_process = current_process + "Instruction Number: ";
+                    current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
                     current_process = current_process + " is issued at reservation station: " + add_sub_station[buffer_no].station_name + "\n";
 
@@ -647,7 +648,7 @@ public:
             }
             else if (instr[curr_instr].inst_type == Instruction_Type::MULT || instr[curr_instr].inst_type == Instruction_Type::DIVD)
             {
-                buffer_no = Free_Res_Station_For_MulDiv();
+                int buffer_no = Free_Res_Station_For_MulDiv();
 
                 if (buffer_no == -1)
                 {
@@ -660,14 +661,14 @@ public:
 
                 else
                 {
-                    mul_div_station[buffer_no].isBusy = true;
-                    mul_div_station[buffer_no].inst = &this->instr[curr_instr];
+                    this->mul_div_station[buffer_no].isBusy = true;
+                    this->mul_div_station[buffer_no].inst = &this->instr[curr_instr];
                     this->instr[curr_instr].inst_status.issue = cycle_number;
-                    current_process = current_process + "Instruction Number: ";
+                    current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
                     current_process = current_process + " is issued at reservation station: " + mul_div_station[buffer_no].station_name + "\n";
 
-                    if (instr[curr_instr].inst_type == "Mul")
+                    if (instr[curr_instr].inst_type == Instruction_Type::MULT)
                         this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_mul_cycle;
                     else
                         this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_div_cycle;
