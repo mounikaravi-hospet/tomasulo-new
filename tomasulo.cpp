@@ -470,34 +470,34 @@ public:
     {
         for (int i = 0; i < no_of_load_buf; i++)
         {
-            if (load_buf[i].isBusy == false)
+            if (this->load_buf[i].isBusy == false)
                 continue;
 
-            if (load_buf[i].func_unit == name)
+            if (this->load_buf[i].func_unit == name)
                 this->load_buf[i].func_unit = "";
         }
 
         for (int i = 0; i < no_of_store_buf; i++)
         {
-            if (store_buf[i].isBusy == false)
+            if (this->store_buf[i].isBusy == false)
                 continue;
 
-            if (store_buf[i].func_unit == name)
+            if (this->store_buf[i].func_unit == name)
                 this->store_buf[i].func_unit = "";
         }
 
         for (int i = 0; i < no_of_add_sub_station; i++)
         {
-            if (add_sub_station[i].isBusy == false)
+            if (this->add_sub_station[i].isBusy == false)
                 continue;
 
-            if (add_sub_station[i].Qj == name)
+            if (this->add_sub_station[i].Qj == name)
             {
                 this->add_sub_station[i].Qj = "";
                 this->add_sub_station[i].Vj = val;
             }
 
-            if (add_sub_station[i].Qk == name)
+            if (this->add_sub_station[i].Qk == name)
             {
                 this->add_sub_station[i].Qk = "";
                 this->add_sub_station[i].Vk = val;
@@ -506,16 +506,16 @@ public:
 
         for (int i = 0; i < no_of_mul_div_station; i++)
         {
-            if (mul_div_station[i].isBusy == false)
+            if (this->mul_div_station[i].isBusy == false)
                 continue;
 
-            if (mul_div_station[i].Qj == name)
+            if (this->mul_div_station[i].Qj == name)
             {
                 this->mul_div_station[i].Qj = "";
                 this->mul_div_station[i].Vj = val;
             }
 
-            if (mul_div_station[i].Qk == name)
+            if (this->mul_div_station[i].Qk == name)
             {
                 this->mul_div_station[i].Qk = "";
                 this->mul_div_station[i].Vk = val;
@@ -554,14 +554,14 @@ public:
                     this->instr[curr_instr].inst_status.issue = cycle_number;
                     current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
-                    current_process = current_process + " is issued at load buffer: " + load_buf[buffer_no].buffer_name + "\n";
+                    current_process = current_process + " is issued at load buffer: " + this->load_buf[buffer_no].buffer_name + "\n";
 
                     this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_load_store_cycle;
                     //checking RAW hazard
                     int register_no = atoi(&this->instr[curr_instr].src_reg_2.c_str()[1]);
                     this->load_buf[buffer_no].func_unit = this->status[register_no].write_unit;
                     //set status of register being written by load instruction
-                    this->status[register_no].write_unit = load_buf[buffer_no].buffer_name;
+                    this->status[register_no].write_unit = this->load_buf[buffer_no].buffer_name;
                 }
             }
 
@@ -590,7 +590,7 @@ public:
                     this->instr[curr_instr].inst_status.issue = cycle_number;
                     current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
-                    current_process = current_process + " is issued at store buffer: " + store_buf[buffer_no].buffer_name + "\n";
+                    current_process = current_process + " is issued at store buffer: " + this->store_buf[buffer_no].buffer_name + "\n";
 
                     this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_load_store_cycle;
                     //checking RAW hazard
@@ -621,7 +621,7 @@ public:
                     this->instr[curr_instr].inst_status.issue = cycle_number;
                     current_process = current_process + "#Instruction Number: ";
                     current_process.append(num);
-                    current_process = current_process + " is issued at reservation station: " + add_sub_station[buffer_no].station_name + "\n";
+                    current_process = current_process + " is issued at reservation station: " + this->add_sub_station[buffer_no].station_name + "\n";
 
                     this->instr[curr_instr].inst_status.cycle_remaining = this->no_of_add_sub_cycle;
                     this->add_sub_station[buffer_no].inst_type = this->instr[curr_instr].inst_type;
@@ -712,7 +712,7 @@ public:
                 continue; //instruction completed at this cycle number so can't write back yet
 
             this->load_buf[i].inst->inst_status.write_back = cycle_number;
-            current_process += "#Instruction at load buffer " + load_buf[i].buffer_name + " is written back.\n";
+            current_process += "#Instruction at load buffer " + this->load_buf[i].buffer_name + " is written back.\n";
             int reg_no = atoi(&this->load_buf[i].inst->src_reg_2.c_str()[1]);
 
             if (this->status[reg_no].write_unit == this->load_buf[i].buffer_name)
@@ -738,9 +738,9 @@ public:
             if (this->store_buf[i].inst->inst_status.exe_complete == cycle_number)
                 continue; //instruction completed at this cycle number so can't write back yet
 
-            this->store_buf[i].inst->inst_status.write_back = cycle_number;
             current_process += "#Instruction at store buffer " + store_buf[i].buffer_name + " is written back.\n";
 
+            this->store_buf[i].inst->inst_status.write_back = cycle_number;
             this->store_buf[i].isBusy = false;
             this->store_buf[i].reg_loc = "";
             this->store_buf[i].inst = nullptr;
@@ -787,7 +787,7 @@ public:
             if (this->mul_div_station[i].inst->inst_status.exe_complete == cycle_number)
                 continue; //instruction completed at this cycle number so can't write back yet
 
-            this->add_sub_station[i].inst->inst_status.write_back = cycle_number;
+            this->mul_div_station[i].inst->inst_status.write_back = cycle_number;
             current_process += "#Instruction at Reservation station " + mul_div_station[i].station_name + " is written back.\n";
             int reg_no = atoi(&this->mul_div_station[i].inst->dest_reg.c_str()[1]);
 
@@ -832,12 +832,12 @@ public:
                     //we are done with the execution of the instruction
                     this->load_buf[i].inst->inst_status.exe_complete = cycle_number;
                     //display this on the screen
-                    current_process = current_process + "#Instruction at load buffer " + load_buf[i].buffer_name + " has completed execution.\n";
+                    current_process = current_process + "#Instruction at load buffer " + this->load_buf[i].buffer_name + " has completed execution.\n";
                     continue;
                 }
                 else
                 {
-                    current_process = current_process + "#Instruction at load buffer " + load_buf[i].buffer_name + " has started its execution.\n";
+                    current_process = current_process + "#Instruction at load buffer " + this->load_buf[i].buffer_name + " has started its execution.\n";
                     continue;
                 }
             }
@@ -854,12 +854,12 @@ public:
                 //we are done with the execution of the instruction
                 this->load_buf[i].inst->inst_status.exe_complete = cycle_number;
                 //display this on the screen
-                current_process = current_process + "#Instruction at load buffer " + load_buf[i].buffer_name + " has completed execution.\n";
+                current_process = current_process + "#Instruction at load buffer " + this->load_buf[i].buffer_name + " has completed execution.\n";
                 continue;
             }
             else
             {
-                current_process = current_process + "#Instruction at load buffer " + load_buf[i].buffer_name + " has started its execution.\n";
+                current_process = current_process + "#Instruction at load buffer " + this->load_buf[i].buffer_name + " has executed another cycle.\n";
                 continue;
             }
             i++;
@@ -887,12 +887,12 @@ public:
                     //we are done with the execution of the instruction
                     this->store_buf[j].inst->inst_status.exe_complete = cycle_number;
                     //display this on the screen
-                    current_process = current_process + "#Instruction at store buffer " + store_buf[j].buffer_name + " has completed execution.\n";
+                    current_process = current_process + "#Instruction at store buffer " + this->store_buf[j].buffer_name + " has completed execution.\n";
                     continue;
                 }
                 else
                 {
-                    current_process = current_process + "#Instruction at store buffer " + store_buf[j].buffer_name + " has started its execution.\n";
+                    current_process = current_process + "#Instruction at store buffer " + this->store_buf[j].buffer_name + " has started its execution.\n";
                     continue;
                 }
             }
@@ -909,12 +909,12 @@ public:
                 //we are done with the execution of the instruction
                 this->store_buf[j].inst->inst_status.exe_complete = cycle_number;
                 //display this on the screen
-                current_process = current_process + "#Instruction at store buffer " + store_buf[j].buffer_name + " has completed execution.\n";
+                current_process = current_process + "#Instruction at store buffer " + this->store_buf[j].buffer_name + " has completed execution.\n";
                 continue;
             }
             else
             {
-                current_process = current_process + "#Instruction at store buffer " + store_buf[j].buffer_name + " has started its execution.\n";
+                current_process = current_process + "#Instruction at store buffer " + this->store_buf[j].buffer_name + " has executed another cycle.\n";
                 continue;
             }
             j++;
@@ -942,12 +942,12 @@ public:
                     //we are done with the execution of the instruction
                     this->add_sub_station[k].inst->inst_status.exe_complete = cycle_number;
                     //display this on the screen
-                    current_process = current_process + "#Instruction at reservation station " + add_sub_station[k].station_name + " has completed execution.\n";
+                    current_process = current_process + "#Instruction at reservation station " + this->add_sub_station[k].station_name + " has completed execution.\n";
                     continue;
                 }
                 else
                 {
-                    current_process = current_process + "#Instruction at reservation station " + add_sub_station[k].station_name + " has started its execution.\n";
+                    current_process = current_process + "#Instruction at reservation station " + this->add_sub_station[k].station_name + " has started its execution.\n";
                     continue;
                 }
             }
@@ -964,12 +964,12 @@ public:
                 //we are done with the execution of the instruction
                 this->add_sub_station[k].inst->inst_status.exe_complete = cycle_number;
                 //display this on the screen
-                current_process = current_process + "#Instruction at reservation station " + add_sub_station[k].station_name + " has completed execution.\n";
+                current_process = current_process + "#Instruction at reservation station " + this->add_sub_station[k].station_name + " has completed execution.\n";
                 continue;
             }
             else
             {
-                current_process = current_process + "#Instruction at reservation station " + add_sub_station[k].station_name + " has started its execution.\n";
+                current_process = current_process + "#Instruction at reservation station " + this->add_sub_station[k].station_name + " has executed one more cycle.\n";
                 continue;
             }
             k++;
@@ -997,12 +997,12 @@ public:
                     //we are done with the execution of the instruction
                     this->mul_div_station[l].inst->inst_status.exe_complete = cycle_number;
                     //display this on the screen
-                    current_process = current_process + "#Instruction at reservation station " + mul_div_station[l].station_name + " has completed execution.\n";
+                    current_process = current_process + "#Instruction at reservation station " + this->mul_div_station[l].station_name + " has completed execution.\n";
                     continue;
                 }
                 else
                 {
-                    current_process = current_process + "#Instruction at reservation station " + mul_div_station[l].station_name + " has started its execution.\n";
+                    current_process = current_process + "#Instruction at reservation station " + this->mul_div_station[l].station_name + " has started its execution.\n";
                     continue;
                 }
             }
@@ -1019,12 +1019,12 @@ public:
                 //we are done with the execution of the instruction
                 this->mul_div_station[l].inst->inst_status.exe_complete = cycle_number;
                 //display this on the screen
-                current_process = current_process + "#Instruction at reservation station " + mul_div_station[l].station_name + " has completed execution.\n";
+                current_process = current_process + "#Instruction at reservation station " + this->mul_div_station[l].station_name + " has completed execution.\n";
                 continue;
             }
             else
             {
-                current_process = current_process + "#Instruction at reservation station " + mul_div_station[l].station_name + " has started its execution.\n";
+                current_process = current_process + "#Instruction at reservation station " + this->mul_div_station[l].station_name + " has executed one more cycle.\n";
                 continue;
             }
             l++;
@@ -1034,31 +1034,30 @@ public:
     void simulation()
     {
         //simulate the algorithm
-        int curr_inst_number_to_issue = 0;
-        int curr_cycle = 0;
+        int curr_instr = 0;
+        cycle_number = 0;
 
-        while (1)
+        while (true)
         {
             movecursorto(0, 0);
-            cout << "Current Cycle is: " << curr_cycle;
+            cout << "Current Cycle is: " << cycle_number;
             display();
             char ch;
             cout << "press any key and hit enter......";
             cin >> ch;
-            curr_cycle += 1;
+            cycle_number += 1;
 
             system("cls");
             current_process = "";
 
-            int flag = Issue_Instruction(curr_inst_number_to_issue);
+            int flag = Issue_Instruction(curr_instr);
 
-            if (flag == -1)
+            if (flag != -1)
             {
-                curr_inst_number_to_issue += 1;
-
-                execute();
-                Writing_Back();
+                curr_instr++;
             }
+            execute();
+            Writing_Back();
         }
     }
     void display()
@@ -1140,9 +1139,25 @@ public:
             movecursorto(89, y);
             cout << "|_______|__________|__________|" << endl;
         }
+
+        for (int i = 0; i < no_of_store_buf; i++)
+        {
+            y++;
+            movecursorto(78, y);
+            cout << setw(10) << std::right << store_buf[i].buffer_name;
+            cout << " ";
+            cout << "|" << std::right << setw(7) << (store_buf[i].isBusy == true ? "yes" : "no") << "|" << setw(10) << store_buf[i].reg_loc << "|" << setw(10) << store_buf[i].func_unit << "|";
+            if (store_buf[i].inst != nullptr)
+            {
+                cout << setw(3) << store_buf[i].inst->inst_status.cycle_remaining;
+            }
+            y++;
+            movecursorto(89, y);
+            cout << "|_______|__________|__________|" << endl;
+        }
         // Res Stations
         y = (y > j ? y : j);
-        y += 6;
+        y += 5;
         movecursorto(4, y);
         cout << "Reservation Stations:";
         y++;
@@ -1218,13 +1233,15 @@ public:
         cout << "What's happening currently: " << endl
              << current_process;
     }
+    Tomasulo_Algo()
+    {
+    }
 };
 
 int main(int argc, char *argv[])
 {
     // cout<<"Hey";
 
-    system("pause");
     // cout<<"Hello";
     CONSOLE_FONT_INFOEX cfi;
     cfi.cbSize = sizeof(cfi);
@@ -1247,7 +1264,7 @@ int main(int argc, char *argv[])
     Tomasulo_Algo tom;
     tom.loadInstructionSet("input_file.txt");
     tom.simulation();
-    return 0;
+    system("pause");
 }
 
 void movecursorto(short x, short y)
