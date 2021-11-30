@@ -470,34 +470,34 @@ public:
     {
         for (int i = 0; i < no_of_load_buf; i++)
         {
-            if (load_buf[i].isBusy == false)
+            if (this->load_buf[i].isBusy == false)
                 continue;
 
-            if (load_buf[i].func_unit == name)
+            if (this->load_buf[i].func_unit == name)
                 this->load_buf[i].func_unit = "";
         }
 
         for (int i = 0; i < no_of_store_buf; i++)
         {
-            if (store_buf[i].isBusy == false)
+            if (this->store_buf[i].isBusy == false)
                 continue;
 
-            if (store_buf[i].func_unit == name)
+            if (this->store_buf[i].func_unit == name)
                 this->store_buf[i].func_unit = "";
         }
 
         for (int i = 0; i < no_of_add_sub_station; i++)
         {
-            if (add_sub_station[i].isBusy == false)
+            if (this->add_sub_station[i].isBusy == false)
                 continue;
 
-            if (add_sub_station[i].Qj == name)
+            if (this->add_sub_station[i].Qj == name)
             {
                 this->add_sub_station[i].Qj = "";
                 this->add_sub_station[i].Vj = val;
             }
 
-            if (add_sub_station[i].Qk == name)
+            if (this->add_sub_station[i].Qk == name)
             {
                 this->add_sub_station[i].Qk = "";
                 this->add_sub_station[i].Vk = val;
@@ -506,16 +506,16 @@ public:
 
         for (int i = 0; i < no_of_mul_div_station; i++)
         {
-            if (mul_div_station[i].isBusy == false)
+            if (this->mul_div_station[i].isBusy == false)
                 continue;
 
-            if (mul_div_station[i].Qj == name)
+            if (this->mul_div_station[i].Qj == name)
             {
                 this->mul_div_station[i].Qj = "";
                 this->mul_div_station[i].Vj = val;
             }
 
-            if (mul_div_station[i].Qk == name)
+            if (this->mul_div_station[i].Qk == name)
             {
                 this->mul_div_station[i].Qk = "";
                 this->mul_div_station[i].Vk = val;
@@ -1034,31 +1034,30 @@ public:
     void simulation()
     {
         //simulate the algorithm
-        int curr_inst_number_to_issue = 0;
-        int curr_cycle = 0;
+        int curr_instr = 0;
+        cycle_number = 0;
 
-        while (1)
+        while (true)
         {
             movecursorto(0, 0);
-            cout << "Current Cycle is: " << curr_cycle;
+            cout << "Current Cycle is: " << cycle_number;
             display();
             char ch;
             cout << "press any key and hit enter......";
             cin >> ch;
-            curr_cycle += 1;
+            cycle_number += 1;
 
             system("cls");
             current_process = "";
 
-            int flag = Issue_Instruction(curr_inst_number_to_issue);
+            int flag = Issue_Instruction(curr_instr);
 
-            if (flag == -1)
+            if (flag != -1)
             {
-                curr_inst_number_to_issue += 1;
-
-                execute();
-                Writing_Back();
+                curr_instr++;
             }
+            execute();
+            Writing_Back();
         }
     }
     void display()
@@ -1140,9 +1139,25 @@ public:
             movecursorto(89, y);
             cout << "|_______|__________|__________|" << endl;
         }
+
+        for (int i = 0; i < no_of_store_buf; i++)
+        {
+            y++;
+            movecursorto(78, y);
+            cout << setw(10) << std::right << store_buf[i].buffer_name;
+            cout << " ";
+            cout << "|" << std::right << setw(7) << (store_buf[i].isBusy == true ? "yes" : "no") << "|" << setw(10) << store_buf[i].reg_loc << "|" << setw(10) << store_buf[i].func_unit << "|";
+            if (store_buf[i].inst != nullptr)
+            {
+                cout << setw(3) << store_buf[i].inst->inst_status.cycle_remaining;
+            }
+            y++;
+            movecursorto(89, y);
+            cout << "|_______|__________|__________|" << endl;
+        }
         // Res Stations
         y = (y > j ? y : j);
-        y += 6;
+        y += 5;
         movecursorto(4, y);
         cout << "Reservation Stations:";
         y++;
@@ -1218,13 +1233,15 @@ public:
         cout << "What's happening currently: " << endl
              << current_process;
     }
+    Tomasulo_Algo()
+    {
+    }
 };
 
 int main(int argc, char *argv[])
 {
     // cout<<"Hey";
 
-    system("pause");
     // cout<<"Hello";
     CONSOLE_FONT_INFOEX cfi;
     cfi.cbSize = sizeof(cfi);
@@ -1247,7 +1264,7 @@ int main(int argc, char *argv[])
     Tomasulo_Algo tom;
     tom.loadInstructionSet("input_file.txt");
     tom.simulation();
-    return 0;
+    system("pause");
 }
 
 void movecursorto(short x, short y)
