@@ -368,7 +368,7 @@ public:
 
         getline(file_read, file_data);
         file_read >> this->no_of_instr;
-        this->instr = new Instruction[no_of_instr];
+        this->instr = new Instruction[this->no_of_instr];
 
         for (int i = 0; i < no_of_instr; i++)
         {
@@ -548,7 +548,7 @@ public:
                     load_buf[buffer_no].isBusy = true;
                     load_buf[buffer_no].inst = &this->instr[curr_instr];
                     load_buf[buffer_no].reg_loc = this->instr[curr_instr].src_reg_1;
-                    string offset = std::to_string(instr[curr_instr].immediate_offset);
+                    string offset = std::to_string(this->instr[curr_instr].immediate_offset);
                     load_buf[buffer_no].reg_loc += " + ";
                     load_buf[buffer_no].reg_loc.append(offset);
                     this->instr[curr_instr].inst_status.issue = cycle_number;
@@ -597,7 +597,7 @@ public:
                     int register_no = atoi(&this->instr[curr_instr].src_reg_2.c_str()[1]);
                     this->store_buf[buffer_no].func_unit = this->status[register_no].write_unit;
                     //set status of register being written by store instruction
-                    this->status[register_no].write_unit = store_buf[buffer_no].buffer_name;
+                    //this->status[register_no].write_unit = store_buf[buffer_no].buffer_name;
                 }
             }
 
@@ -643,17 +643,17 @@ public:
 
                     register_no = atoi(&this->instr[curr_instr].dest_reg.c_str()[1]);
                     //set status of register being written by add or sub instruction
-                    this->status[register_no].write_unit = add_sub_station[buffer_no].station_name;
+                    this->status[register_no].write_unit = this->add_sub_station[buffer_no].station_name;
                 }
             }
             else if (instr[curr_instr].inst_type == Instruction_Type::MULT || instr[curr_instr].inst_type == Instruction_Type::DIVD)
             {
                 int buffer_no = Free_Res_Station_For_MulDiv();
-
+                string num_conv = std::to_string(curr_instr);
                 if (buffer_no == -1)
                 {
                     current_process = current_process + "#Instruction Number: ";
-                    current_process.append(num);
+                    current_process.append(num_conv);
                     current_process = current_process + " not issued due to structural hazard.\n";
 
                     return -1;
@@ -703,7 +703,7 @@ public:
     {
         for (int i = 0; i < no_of_load_buf; i++)
         {
-            int static number;
+            int static num = 1;
             if (this->load_buf[i].isBusy == false)
                 continue;
             if (this->load_buf[i].inst->inst_status.cycle_remaining != 0)
@@ -721,12 +721,12 @@ public:
             this->load_buf[i].isBusy = false;
             this->load_buf[i].reg_loc = "";
             this->load_buf[i].inst = nullptr;
-            string char_num = std::to_string(number);
+            string char_num = std::to_string(num);
             string value = "M(A";
             value.append(char_num);
             value += ")";
             BroadCast(value, this->load_buf[i].buffer_name);
-            number++;
+            num++;
         }
 
         for (int i = 0; i < no_of_store_buf; i++)
@@ -738,7 +738,7 @@ public:
             if (this->store_buf[i].inst->inst_status.exe_complete == cycle_number)
                 continue; //instruction completed at this cycle number so can't write back yet
 
-            current_process += "#Instruction at store buffer " + store_buf[i].buffer_name + " is written back.\n";
+            current_process += "#Instruction at store buffer " + this->store_buf[i].buffer_name + " is written back.\n";
 
             this->store_buf[i].inst->inst_status.write_back = cycle_number;
             this->store_buf[i].isBusy = false;
@@ -748,7 +748,7 @@ public:
 
         for (int i = 0; i < no_of_add_sub_station; i++)
         {
-            int static number;
+            int static num = 1;
             if (this->add_sub_station[i].isBusy == false)
                 continue;
             if (this->add_sub_station[i].inst->inst_status.cycle_remaining != 0)
@@ -770,16 +770,16 @@ public:
             this->add_sub_station[i].Vj = "";
             this->add_sub_station[i].Vk = "";
             this->add_sub_station[i].inst = nullptr;
-            string char_num = std::to_string(number);
+            string char_num = std::to_string(num);
             string value = "V";
             value.append(char_num);
             BroadCast(value, this->add_sub_station[i].station_name);
-            number++;
+            num++;
         }
 
         for (int i = 0; i < no_of_mul_div_station; i++)
         {
-            int static number;
+            int static num = 1;
             if (this->mul_div_station[i].isBusy == false)
                 continue;
             if (this->mul_div_station[i].inst->inst_status.cycle_remaining != 0)
@@ -801,11 +801,11 @@ public:
             this->mul_div_station[i].Vj = "";
             this->mul_div_station[i].Vk = "";
             this->mul_div_station[i].inst = nullptr;
-            string char_num = std::to_string(number);
+            string char_num = std::to_string(num);
             string value = "V";
             value.append(char_num);
             BroadCast(value, this->mul_div_station[i].station_name);
-            number++;
+            num++;
         }
     }
 
@@ -1235,6 +1235,7 @@ public:
     }
     Tomasulo_Algo()
     {
+        
     }
 };
 
