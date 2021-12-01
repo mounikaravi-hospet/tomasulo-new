@@ -328,7 +328,7 @@ public:
         }
 
         this->add_sub_station = new Reservation_Station[this->no_of_add_sub_station];
-        for (int i = 0; i < no_of_add_sub_station; i++)
+        for (int i = 0; i < this->no_of_add_sub_station; i++)
         {
             string add_sub_num = std::to_string(i);
             this->add_sub_station[i].station_name = ReservationStation_Type::ADDD;
@@ -337,7 +337,7 @@ public:
         }
 
         this->mul_div_station = new Reservation_Station[this->no_of_mul_div_station];
-        for (int i = 0; i < no_of_mul_div_station; i++)
+        for (int i = 0; i < this->no_of_mul_div_station; i++)
         {
             string mul_div_num = std::to_string(i);
             this->mul_div_station[i].station_name = ReservationStation_Type::MULT;
@@ -488,8 +488,8 @@ public:
 
         for (int i = 0; i < no_of_add_sub_station; i++)
         {
-            if (this->add_sub_station[i].isBusy == false)
-                continue;
+            // if (this->add_sub_station[i].isBusy == false)
+            //     continue;
 
             if (this->add_sub_station[i].Qj == name)
             {
@@ -506,8 +506,8 @@ public:
 
         for (int i = 0; i < no_of_mul_div_station; i++)
         {
-            if (this->mul_div_station[i].isBusy == false)
-                continue;
+            // if (this->mul_div_station[i].isBusy == false)
+            //     continue;
 
             if (this->mul_div_station[i].Qj == name)
             {
@@ -561,7 +561,7 @@ public:
                     int register_no = atoi(&this->instr[curr_instr].src_reg_2.c_str()[1]);
                     this->load_buf[buffer_no].func_unit = this->status[register_no].write_unit;
                     //set status of register being written by load instruction
-                    this->status[register_no].write_unit = this->load_buf[buffer_no].buffer_name;
+                    this->status[register_no].write_unit = load_buf[buffer_no].buffer_name;
                 }
             }
 
@@ -788,7 +788,7 @@ public:
                 continue; //instruction completed at this cycle number so can't write back yet
 
             this->mul_div_station[i].inst->inst_status.write_back = cycle_number;
-            current_process += "#Instruction at Reservation station " + mul_div_station[i].station_name + " is written back.\n";
+            current_process += "#Instruction at Reservation station " + this->mul_div_station[i].station_name + " is written back.\n";
             int reg_no = atoi(&this->mul_div_station[i].inst->dest_reg.c_str()[1]);
 
             if (this->status[reg_no].write_unit == this->mul_div_station[i].station_name)
